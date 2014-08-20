@@ -5,6 +5,12 @@ def gameloop():
 	class Card(): #This is the class for each card
 			suit = None
 			rank = None
+			
+			def recordmove(self):
+				set = []
+				for x in range(len(piles)):
+					set.append([piles[x][0].rank,piles[x][0].suit])
+				playbyplay.append(set)			
 
 			def location(self): #returns the pile number of the card
 					for x in range(len(piles)):
@@ -53,14 +59,14 @@ def gameloop():
 
 			def supercheck(self):
 					
-					goldenlist = [-3,-1,1,3]
+					goldenlist = [3,1,-1,-3]
 
 					for x in range(4):
 							if (goldenlist[x] < 0 and abs(goldenlist[x]) > self.location()) or (goldenlist[x] > 0 and self.location() + goldenlist[x] >= len(piles)):
 									pass
 
 							else:
-									focuspile = piles[self.location() + goldenlist[x]]
+									focusindex = piles[self.location() + goldenlist[x]][0].location()
 									
 									for y in range(4):
 											
@@ -68,30 +74,51 @@ def gameloop():
 
 
 
-											if (goldenlist[y] < 0 and abs(goldenlist[y]) > focuspile[0].location()) or (goldenlist[y] > 0 and focuspile[0].location() + goldenlist[y] > len(piles)):
+											if (goldenlist[y] < 0 and abs(goldenlist[y]) > focusindex) or (goldenlist[y] > 0 and focusindex + goldenlist[y] > len(piles)):
 													pass
 											else:
-												if focuspile[0].check(goldenlist[y]):
+												if piles[focusindex][0].check(goldenlist[y]):
 														
-														focuspile = piles[focuspile[0].location() + goldenlist[y]] + focuspile
 														
-														del piles[focuspile[0].location()-goldenlist[y]]
 														
-														card.supercheck()
+														destinationindex = piles[focusindex + goldenlist[y]][0].location()
+														tempindex = focusindex
+														#print("Focus index: %d, Destination index: %d" %(focusindex,destinationindex))
+														
+														
+														if focusindex > destinationindex:
+															piles[destinationindex] = piles[focusindex] + piles[destinationindex]
+
+
+															del piles[focusindex]
+															
+															piles[destinationindex][0].supercheck()
+														else:
+															piles[focusindex] = piles[destinationindex] + piles[focusindex]
+															del piles[destinationindex]
+															piles[focusindex][0].supercheck()
+														self.recordmove()
+														
+														
+														
 														break
 
 
 
 
 			def move_left_one(self):
+				
 				piles[self.location()-1].insert(0,self)
-				del piles[self.location()+1]				
+				del piles[self.location()+1]
+				self.recordmove()
 
 
 
 			def move_left_three(self):
+				
 				piles[self.location()-3].insert(0,self)
 				del piles[self.location()+3]
+				self.recordmove()
 
 
 			def first_card_check(self):
@@ -149,24 +176,31 @@ def gameloop():
 	mydeck.shuffle()
 	
 	piles = []
+	global decklist
+	decklist = []
+	global playbyplay
+	playbyplay = []
 
 	for i in range(52):
 		card = mydeck.draw()
+		decklist.append([card.rank,card.suit])
 					#print(card.rank,card.suit)
 
 		piles.append([card])
+		card.recordmove()
 					#print(piles[-1][0].rank,piles[-1][0].suit)
 
 		card.first_card_check()
+	card.recordmove()
 
 	global endpiles
 	endpiles = []
+	
 	for x in range(len(piles)):
 
 		endpiles.append([piles[x][0].rank,piles[x][0].suit])
-	#print("Final Piles:\n",endpiles)
-	#print("Final Number of Piles:\n",len(endpiles))
-	#print(2*"\n")
+		
+	
 
 
 def playtowin(): #will continue to play games until it wins, prints the number of games played before win
@@ -184,5 +218,13 @@ def playtowin(): #will continue to play games until it wins, prints the number o
 			print("You win!")
 			print("Number of games played before win:",gamesplayed,"\n")
 			
-playtowin()
+			print("Play by play of winning game:\n")
+			for play in playbyplay:
+				for pile in play:
+					print(pile)
+				print("\n")
+					
+			
+playtowin()		
+
 
