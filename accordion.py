@@ -1,12 +1,12 @@
 
-def gameloop():
+def gameloop(): #all of the classes and methods needed to play the game are enclosed in a game loop to allow for multiple games to be played.
 	import random
 
 	class Card(): #This is the class for each card
 			suit = None
 			rank = None
 			
-			def recordmove(self):
+			def recordmove(self): # records the state of the piles after each move, saves it in the playbyplay list
 				set = []
 				for x in range(len(piles)):
 					set.append([piles[x][0].rank,piles[x][0].suit])
@@ -24,7 +24,7 @@ def gameloop():
 									return True
 					return False
 
-			def double_move_one(self):
+			def double_move_one(self): #This checks to see if there is a possibility of a double move, given the drawn card is moved one to the left initially.
 					if len(piles) > 2:
 							if self.suit == piles[self.location()-2][0].suit:
 									return True
@@ -38,7 +38,7 @@ def gameloop():
 									return True
 					return False
 
-			def double_move_three(self):
+			def double_move_three(self): #This checks to see if there is a possibility of a double move, given the drawn card is moved three to the left initially.
 					if len(piles) > 4:
 							if self.suit == piles[self.location()-4][0].suit:
 									return True
@@ -57,7 +57,8 @@ def gameloop():
 									return True
 					return False
 
-			def supercheck(self):
+			def supercheck(self): #This function checks the board for possible additional moves after the first card has been moved. It will recursively check for new moves every time it moves a card.
+								# The check will stop once no new moves are found.
 					
 					goldenlist = [3,1,-1,-3]
 
@@ -106,7 +107,7 @@ def gameloop():
 
 
 
-			def move_left_one(self):
+			def move_left_one(self): # moves the drawn card onto the piles immediately to the left
 				
 				piles[self.location()-1].insert(0,self)
 				del piles[self.location()+1]
@@ -114,14 +115,14 @@ def gameloop():
 
 
 
-			def move_left_three(self):
+			def move_left_three(self): # moves the drawn card onto the pile three to the left of it.
 				
 				piles[self.location()-3].insert(0,self)
 				del piles[self.location()+3]
 				self.recordmove()
 
 
-			def first_card_check(self):
+			def first_card_check(self): #checks to see if the card can be immediately moved once drawn and put at the end of the piles. Gives preference to moves that allow for subsequent moves
 					if self.check(-1) and not self.check(-3):
 							self.move_left_one()
 
@@ -160,25 +161,25 @@ def gameloop():
 									self.card_list[-1].rank = self.ranks[x]
 									self.card_list[-1].suit =self.suits[s]
 
-			def shuffle(self):
+			def shuffle(self): # Shuffles the deck in place
 					random.shuffle(self.card_list)
 
-			def draw(self):
+			def draw(self): # Draws the first card from the deck and returns it
 					tempcard	= self.card_list[0]
 					del self.card_list[0]
 					return (tempcard)
 
 				
-	mydeck = Deck()
+	mydeck = Deck() #Creates a deck to be used during the game
 
-	mydeck.make_cards()
+	mydeck.make_cards() # Makes an object instance of the Card class 52 times
 	
 	mydeck.shuffle()
 	
-	piles = []
-	global decklist
+	piles = [] # These are the piles you lay down on the table when you are playing the game
+	global decklist # This is the list of cards that have been played already. It is used to determine probabilies about the next card to be drawn
 	decklist = []
-	global playbyplay
+	global playbyplay # This is a list of the piles after every move
 	playbyplay = []
 
 	for i in range(52):
@@ -215,16 +216,20 @@ def playtowin(): #will continue to play games until it wins, prints the number o
 			win = True
 			global gamesplayed
 			gamesplayed = len(stats)
+			
 			print("You win!")
-			print("Number of games played before win:",gamesplayed,"\n")
+			
 			
 			print("Play by play of winning game:\n")
 			for play in playbyplay:
 				for pile in play:
 					print(pile)
 				print("\n")
-					
+			print("Number of games played before win:",gamesplayed,"\n")	
+			print("Numer of moves required to win:", len(playbyplay))
+
 			
-playtowin()		
+playtowin()			
+
 
 
