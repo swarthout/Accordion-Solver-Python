@@ -192,7 +192,7 @@ def gameloop(): #all of the classes and methods needed to play the game are encl
 					#print(piles[-1][0].rank,piles[-1][0].suit)
 
 		card.first_card_check()
-	card.recordmove()
+	
 
 	global endpiles
 	endpiles = []
@@ -204,32 +204,38 @@ def gameloop(): #all of the classes and methods needed to play the game are encl
 	
 
 
-def playtowin(): #will continue to play games until it wins, prints the number of games played before win
+def playtowin(max_wins): #will continue to play games until it wins max_wins number of times, prints the number of games played before each win
 
 	stats = []
-	win = False
-	while win == False:
-		gameloop()
-		stats.append(len(endpiles))
-		stats.sort()
-		if stats[0] == 1:
-			win = True
-			global gamesplayed
-			gamesplayed = len(stats)
+	
+	num_wins = 0
+	#
+	while num_wins < max_wins:
+		win = False
+		while win == False:
+			gameloop()
+			stats.append(len(endpiles))
+			stats.sort()
+			if stats[0] == 1:
+				win = True
+				num_wins +=1
+
+				global gamesplayed
+				gamesplayed = len(stats)
+				stats = []
+				print("You win!")
+
+
+				print("Play by play of winning game:\n")
+				for play in playbyplay:
+					for pile in play:
+						print(pile)
+					print("\n")
+				print("Number of games played before win:",gamesplayed,"\n")	
 			
-			print("You win!")
-			
-			
-			print("Play by play of winning game:\n")
-			for play in playbyplay:
-				for pile in play:
-					print(pile)
-				print("\n")
-			print("Number of games played before win:",gamesplayed,"\n")	
-			print("Numer of moves required to win:", len(playbyplay))
 
 			
-playtowin()			
+playtowin(1)	
 
 
 
