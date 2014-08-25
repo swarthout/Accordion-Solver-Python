@@ -118,7 +118,8 @@ def gameloop(): #all of the classes and methods needed to play the game are encl
 			def move_left_three(self): # moves the drawn card onto the pile three to the left of it.
 				
 				piles[self.location()-3].insert(0,self)
-				del piles[self.location()+3]
+				if (self.location()+3)<len(piles):
+					del piles[self.location()+3]
 				self.recordmove()
 
 
@@ -237,7 +238,7 @@ def playtowin(max_wins): #will continue to play games until it wins max_wins num
 			
 
 			
-playtowin(10)	
+playtowin(3)	
 
 
 
