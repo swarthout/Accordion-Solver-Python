@@ -175,7 +175,7 @@ def gameloop(): #all of the classes and methods needed to play the game are encl
 	mydeck.make_cards() # Makes an object instance of the Card class 52 times
 	
 	mydeck.shuffle()
-	
+	global piles
 	piles = [] # These are the piles you lay down on the table when you are playing the game
 	global decklist # This is the list of cards that have been played already. It is used to determine probabilies about the next card to be drawn
 	decklist = []
@@ -223,19 +223,21 @@ def playtowin(max_wins): #will continue to play games until it wins max_wins num
 				global gamesplayed
 				gamesplayed = len(stats)
 				stats = []
+				piles = []
 				print("You win!")
 
 
-				print("Play by play of winning game:\n")
-				for play in playbyplay:
-					for pile in play:
-						print(pile)
-					print("\n")
+				#print("Play by play of winning game:\n")
+				#for play in playbyplay:
+					#for pile in play:
+						#print(pile)
+					#print("\n")
 				print("Number of games played before win:",gamesplayed,"\n")	
+				
 			
 
 			
-playtowin(1)	
+playtowin(10)	
 
 
 
