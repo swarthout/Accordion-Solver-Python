@@ -1,5 +1,5 @@
 #This is where we can add a bunch of different functions for testing the game and obtaining data and drawing conclusions. 
-from accordion import gameloop
+from accordion import game_loop
 import math
 import statistics
 import random
