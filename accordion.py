@@ -1,6 +1,7 @@
 import numpy as np
 import random
 
+
 class Card():  # This is the class for each card
     suit = None
     rank = None
@@ -67,7 +68,7 @@ class Card():  # This is the class for each card
 
         for x in range(4):
             if (golden_list[x] < 0 and abs(golden_list[x]) > self.location()) or (
-                            golden_list[x] > 0 and self.location() + golden_list[x] >= len(piles)):
+                    golden_list[x] > 0 and self.location() + golden_list[x] >= len(piles)):
                 pass
 
             else:
@@ -76,7 +77,7 @@ class Card():  # This is the class for each card
                 for y in range(4):
 
                     if (golden_list[y] < 0 and abs(golden_list[y]) > focusindex) or (
-                                    golden_list[y] > 0 and focusindex + golden_list[y] > len(piles)):
+                            golden_list[y] > 0 and focusindex + golden_list[y] > len(piles)):
                         pass
                     else:
                         if piles[focusindex][0].check(golden_list[y]):
@@ -139,6 +140,7 @@ class Card():  # This is the class for each card
 
                 self.check_recursively()
 
+
 class Deck:  # each deck is its own class
     card_list = []
     suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
@@ -157,8 +159,10 @@ class Deck:  # each deck is its own class
     def riffle(self):
         inds = list(range(52))
         cut_loc = int(np.round(np.random.normal(loc=26.0, scale=4.0)))
-        if cut_loc < 1: cut_loc = 1
-        elif cut_loc > 51: cut_loc = 51
+        if cut_loc < 1:
+            cut_loc = 1
+        elif cut_loc > 51:
+            cut_loc = 51
         top = inds[:cut_loc]
         bot = inds[cut_loc:]
         p_top = 0.5
@@ -181,8 +185,10 @@ class Deck:  # each deck is its own class
     def cut(self):
         inds = range(52)
         cut_loc = np.round(np.random.normal(loc=26.0, scale=10.0))
-        if cut_loc < 1: cut_loc = 1
-        elif cut_loc > 51: cut_loc = 51
+        if cut_loc < 1:
+            cut_loc = 1
+        elif cut_loc > 51:
+            cut_loc = 51
 
     def draw(self):  # Draws the first card from the deck and returns it
         temp_card = self.card_list[0]
@@ -190,8 +196,9 @@ class Deck:  # each deck is its own class
         return (temp_card)
 
 
-def game_loop(init_deck=None, riffles=0):  # all of the classes and methods needed to play the game are enclosed in a game loop to allow for multiple games to be played.
-    
+def game_loop(init_deck=None,
+              riffles=0):  # all of the classes and methods needed to play the game are enclosed in a game loop to allow for multiple games to be played.
+
     if init_deck == None:
         mydeck = Deck()  # Creates a deck to be used during the game
 
@@ -237,7 +244,7 @@ def play_to_win(max_wins, riffles=None):
     stats = []
 
     num_wins = 0
-    
+
     final_piles = []
     all_gamesplayed = []
     while num_wins < max_wins:
@@ -263,7 +270,7 @@ def play_to_win(max_wins, riffles=None):
                 final_piles.append(final_pile)
                 stats.append(len(endpiles))
                 stats.sort()
-                
+
             if stats[0] == 1:
                 win = True
                 num_wins += 1
@@ -272,24 +279,26 @@ def play_to_win(max_wins, riffles=None):
                 gamesplayed = len(stats)
                 stats = []
                 piles = []
-                # print("Play by play of winning game:\n")
-                # for play in playbyplay:
-                # for pile in play:
-                # print(pile)
-                # print("\n")
+                print("Play by play of winning game:\n")
+                for play in playbyplay:
+                    for pile in play:
+                        print(pile, sep=" ")
+                    print()
+                print("\n")
                 print(f"Number of games played before win: {gamesplayed}")
                 all_gamesplayed.append(gamesplayed)
     return final_piles, all_gamesplayed
 
 
-for i in range(12):
-    print(f"\n\nPlaying with {i+1} riffle shuffles:")
-    final_piles, gamesplayed = play_to_win(50, riffles=i+1)
-
-    num_stacks = []
-    for final_pile in final_piles:
-        num_stacks.append(len(final_pile))
-
-    num_stacks = np.array(num_stacks)
-    np.save(f"stack_distribution_{i+1}_riffle.npy", num_stacks)
-    np.save(f"gamesplayed_{i+1}_riffle.npy", gamesplayed)
+play_to_win(1, riffles=1)
+# for i in range(12):
+#     print(f"\n\nPlaying with {i+1} riffle shuffles:")
+#     final_piles, gamesplayed = play_to_win(50, riffles=i+1)
+#
+#     num_stacks = []
+#     for final_pile in final_piles:
+#         num_stacks.append(len(final_pile))
+#
+#     num_stacks = np.array(num_stacks)
+#     np.save(f"stack_distribution_{i+1}_riffle.npy", num_stacks)
+#     np.save(f"gamesplayed_{i+1}_riffle.npy", gamesplayed)
