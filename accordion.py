@@ -282,14 +282,14 @@ def play_to_win(max_wins, riffles=None):
     return final_piles, all_gamesplayed
 
 
-for i in range(12):
-    print(f"\n\nPlaying with {i+1} riffle shuffles:")
-    final_piles, gamesplayed = play_to_win(50, riffles=i+1)
+for i in range(4):
+    print(f"\n\nPlaying with {i+8} riffle shuffles:")
+    final_piles, gamesplayed = play_to_win(50, riffles=i+8)
 
     num_stacks = []
     for final_pile in final_piles:
         num_stacks.append(len(final_pile))
 
     num_stacks = np.array(num_stacks)
-    np.save(f"stack_distribution_{i+1}_riffle.npy", num_stacks)
+    np.save(f"stack_distribution_{i+8}_riffle.npy", num_stacks)
     np.save(f"gamesplayed_{i+1}_riffle.npy", gamesplayed)
