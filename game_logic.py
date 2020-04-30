@@ -50,24 +50,9 @@ def get_possible_moves(piles):
     return moves
 
 
-def get_move_tree(piles):
-    moves = get_possible_moves(piles)
-    if not moves:
-        return []
-    all_moves = []
-    for move in moves:
-        new_piles = apply_move(move)
-        new_moves = get_move_tree(new_piles)
-        if new_moves:
-            all_moves.append([move, new_moves])
-        else:
-            all_moves.append([move])
-    return all_moves
-
-
-def get_all_moves(piles):
+def get_all_moves(piles: List[Card]):
     moves_stack = [[move] for move in get_possible_moves(piles)]
-    all_moves = moves_stack.copy()
+    all_moves = []
     while moves_stack:
         move_list = moves_stack.pop()
         last_move = move_list[-1]
@@ -78,7 +63,9 @@ def get_all_moves(piles):
                 to_add = move_list.copy()
                 to_add.append(new_move)
                 moves_stack.append(to_add)
-                all_moves.append(to_add)
+
+        else:
+            all_moves.append(move_list)
     return all_moves
 
 
@@ -114,5 +101,5 @@ def test_apply_move_list():
 
 
 if __name__ == "__main__":
-    # test_get_all_moves()
+    test_get_all_moves()
     test_apply_move_list()

@@ -9,10 +9,10 @@ class MiniMax:
     num_simulated_draws = 10
 
     @staticmethod
-    def eval_game_state(piles: List):
+    def eval_game_state(piles: List[Card]):
         return len(piles)
 
-    def calculate(self, piles: List, deck: List, max_depth: int, alpha: int, beta: int, is_max: bool):
+    def calculate(self, piles: List[Card], deck: List[Card], max_depth: int, alpha: int, beta: int, is_max: bool):
         # if the max depth has been exceeded, exit search
         if max_depth == 0:
             return self.eval_game_state(piles)
@@ -27,7 +27,7 @@ class MiniMax:
                 deck_copy = deck.copy()
                 random.shuffle(deck_copy)
                 piles_copy = piles.copy()
-                card = deck.pop()
+                card = deck.pop(0)
                 piles_copy.append(card)
                 children.append((piles_copy, deck_copy))
             for child in children:
