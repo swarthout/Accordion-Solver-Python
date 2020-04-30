@@ -1,5 +1,6 @@
 import random
 from typing import List
+from game_logic import get_all_moves, apply_move_list, Card, Deck
 
 import numpy as np
 
@@ -38,4 +39,21 @@ class MiniMax:
             return v
         # this is the minimizing player (the one trying to collapse the deck to 1 pile)
         else:
-            pass
+            all_moves = get_all_moves(piles)
+            v = np.inf
+            for move in all_moves:
+                child_pile = apply_move_list(move)
+                v = min(v, self.calculate(child_pile, deck, max_depth - 1, alpha, beta, True))
+                if v <= alpha:
+                    return v
+                beta = min(beta, v)
+            return v
+
+
+if __name__ == "__main__":
+    m = MiniMax()
+    m.num_simulated_draws = 2
+    piles = [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")]
+    deck = Deck()
+    deck.shuffle()
+    print(m.calculate(piles, deck.card_list, 4, -np.inf, np.inf, False))
