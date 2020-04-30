@@ -9,8 +9,8 @@ riffles = []
 stacks = []
 games = []
 for i in range(6):
-    stack_filename = f"stack_distribution_{i+1}_riffle.npy"
-    games_filename = f"gamesplayed_{i+1}_riffle.npy"
+    stack_filename = f"mil_stack_distribution_{i+1}_riffle.npy"
+    games_filename = f"mil_gamesplayed_{i+1}_riffle.npy"
     
     riffles.append(i+1)
     stacks.append(np.load(stack_filename))
