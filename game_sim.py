@@ -11,6 +11,19 @@ class GameResult:
     final_piles: List[Card]
     game_recording: List[Tuple[List[Card], List[Move]]]
 
+    def get_full_piles(self):
+        piles = []
+        for event in self.game_recording:
+            recorded_piles, move_list = event
+            piles.append([recorded_piles[-1]])
+            for move in move_list:
+                start = move.start_index
+                end = move.end_index
+                piles[end].extend(piles[start])
+                del piles[start]
+
+        return piles
+
 
 def run_game(deck: List[Card], strategy: GameStrategy):
     piles = []
@@ -38,7 +51,9 @@ if __name__ == "__main__":
         d = Deck()
         d.shuffle()
         res = run_game(d.card_list, greedy)
+        full_piles = res.get_full_piles()
         if res.num_final_piles == 1:
             won = True
     print(games_until_win)
     print(res)
+    print(res.get_full_piles())
