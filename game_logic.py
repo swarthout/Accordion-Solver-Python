@@ -49,6 +49,7 @@ def get_possible_moves(piles):
 
 def get_all_moves(piles: List[Card]):
     moves_stack = [[move] for move in get_possible_moves(piles)]
+    max_num_moves = 10_000
     all_moves = []
     while moves_stack:
         move_list = moves_stack.pop()
@@ -63,6 +64,8 @@ def get_all_moves(piles: List[Card]):
 
         else:
             all_moves.append(move_list)
+            if len(all_moves) > max_num_moves:
+                break
     return all_moves
 
 
@@ -99,7 +102,8 @@ def test_get_all_moves():
         num_initial_move = len(initial_moves)
         num_total_moves = len(total_moves)
         toc = perf_counter()
-        print(f"get_all_moves for {i} piles took {toc - tic:0.4f} seconds ({num_initial_move} initial moves, {num_total_moves} total moves  )")
+        print(
+            f"get_all_moves for {i} piles took {toc - tic:0.4f} seconds ({num_initial_move} initial moves, {num_total_moves} total moves  )")
 
 
 def test_apply_move_list():
