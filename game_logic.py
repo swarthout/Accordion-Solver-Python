@@ -1,5 +1,6 @@
 import random
 from dataclasses import dataclass
+from time import perf_counter
 from typing import List, Optional
 
 
@@ -11,9 +12,9 @@ class Card:
 
 @dataclass
 class Move:
-    piles: List[Card]
     start_index: int
     end_index: int
+    piles: List[Card]
 
 
 class Deck:  # each deck is its own class
@@ -35,18 +36,14 @@ def cards_match(card1: Card, card2: Card) -> bool:
     return (card1.rank == card2.rank) or (card1.suit == card2.suit)
 
 
-def can_move(piles: List[Card]):
-    return len(get_possible_moves(piles)) == 0
-
-
 def get_possible_moves(piles):
     moves = []
     for i in range(len(piles) - 1, 0, -1):
         if i >= 3:
             if cards_match(piles[i], piles[i - 3]):
-                moves.append(Move(piles, start_index=i, end_index=i - 3))
+                moves.append(Move(piles=piles, start_index=i, end_index=i - 3))
         if cards_match(piles[i], piles[i - 1]):
-            moves.append(Move(piles, start_index=i, end_index=i - 1))
+            moves.append(Move(piles=piles, start_index=i, end_index=i - 1))
     return moves
 
 
@@ -88,9 +85,21 @@ def test_get_possible_moves():
 
 
 def test_get_all_moves():
-    all_moves = get_all_moves(
-        [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")])
-    print(all_moves)
+    # d = Deck()
+    # d.shuffle()
+    # all_moves = get_all_moves(
+    # [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")])
+    d = Deck()
+    d.shuffle()
+    for i in range(1, 20):
+        piles = d.card_list[:i]
+        tic = perf_counter()
+        initial_moves = get_possible_moves(piles)
+        total_moves = get_all_moves(piles)
+        num_initial_move = len(initial_moves)
+        num_total_moves = len(total_moves)
+        toc = perf_counter()
+        print(f"get_all_moves for {i} piles took {toc - tic:0.4f} seconds ({num_initial_move} initial moves, {num_total_moves} total moves  )")
 
 
 def test_apply_move_list():
@@ -102,4 +111,4 @@ def test_apply_move_list():
 
 if __name__ == "__main__":
     test_get_all_moves()
-    test_apply_move_list()
+    # test_apply_move_list()

@@ -16,18 +16,22 @@ class MiniMax:
         # if the max depth has been exceeded, exit search
         if max_depth == 0:
             return self.eval_game_state(piles)
-        # if the deck is empty the game is over
+        # if the deck is empty the game is over, exit search
         if len(deck) == 0:
+            return self.eval_game_state(piles)
+        # if there are no moves to play, exit search
+        if not get_all_moves(piles):
             return self.eval_game_state(piles)
         # this is the maximizing player (the one flipping new cards over)
         if is_max:
             children = []
             v = -np.inf
+            # simulate num_simulated_draws
             for _ in range(self.num_simulated_draws):
                 deck_copy = deck.copy()
                 random.shuffle(deck_copy)
                 piles_copy = piles.copy()
-                card = deck.pop(0)
+                card = deck_copy.pop(0)
                 piles_copy.append(card)
                 children.append((piles_copy, deck_copy))
             for child in children:
@@ -52,7 +56,6 @@ class MiniMax:
 
 if __name__ == "__main__":
     m = MiniMax()
-    m.num_simulated_draws = 2
     piles = [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")]
     deck = Deck()
     deck.shuffle()

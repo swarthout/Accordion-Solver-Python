@@ -2,13 +2,13 @@ from dataclasses import dataclass
 from typing import List, Tuple
 
 from game_logic import Card, Move, apply_move_list, Deck
-from strategies import GameStrategy, GreedyStrategy
+from strategies import GameStrategy, GreedyStrategy, MinimaxStrategy
 
 
 @dataclass
 class GameResult:
-    final_piles: List[Card]
     num_final_piles: int
+    final_piles: List[Card]
     game_recording: List[Tuple[List[Card], List[Move]]]
 
 
@@ -29,14 +29,16 @@ def run_game(deck: List[Card], strategy: GameStrategy):
 
 if __name__ == "__main__":
 
-    s = GreedyStrategy()
-
+    greedy = GreedyStrategy()
+    minimax = MinimaxStrategy(max_depth=5)
+    games_until_win = 0
     won = False
     while not won:
+        games_until_win += 1
         d = Deck()
         d.shuffle()
-        res = run_game(d.card_list, s)
+        res = run_game(d.card_list, greedy)
         if res.num_final_piles == 1:
             won = True
-
+    print(games_until_win)
     print(res)
