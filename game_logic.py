@@ -31,6 +31,36 @@ class Deck:  # each deck is its own class
     def shuffle(self):
         random.shuffle(self.card_list)
 
+    def reconstruct(self, piles):
+        self.card_list = []
+        for i in range(len(piles)):
+            for j in range(len(piles[i])):
+                c = Card(piles[i][j].rank, piles[i][j].suit)
+                self.card_list.append(c)
+
+    def riffle(self):
+        inds = list(range(52))
+        cut_loc = int(np.round(np.random.normal(loc=26.0, scale=4.0)))
+        if cut_loc < 1: cut_loc = 1
+        elif cut_loc > 51: cut_loc = 51
+        top = inds[:cut_loc]
+        bot = inds[cut_loc:]
+        p_top = 0.5
+        new_inds = []
+        while len(top) > 0 or len(bot) > 0:
+            rand = np.random.rand()
+            if rand > p_top and len(top) > 0:
+                new_inds.append(top.pop())
+                p_top = 0.9
+            elif rand < p_top and len(bot) > 0:
+                new_inds.append(bot.pop())
+                p_top = 0.1
+            elif len(top) == 0:
+                new_inds.append(bot.pop())
+            elif len(bot) == 0:
+                new_inds.append(top.pop())
+        new_inds = np.array(new_inds, dtype=np.int)
+        self.card_list = [self.card_list[i] for i in new_inds]
 
 def cards_match(card1: Card, card2: Card) -> bool:
     return (card1.rank == card2.rank) or (card1.suit == card2.suit)

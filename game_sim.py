@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List, Tuple
 
 from game_logic import Card, Move, apply_move_list, Deck
-from strategies import GameStrategy, GreedyStrategy, MinimaxStrategy, OptimisticStrategy
+from strategies import GameStrategy, GreedyStrategy, MinimaxStrategy, OptimisticStrategy, RandomStrategy
 
 
 @dataclass
@@ -39,22 +39,35 @@ def run_game(deck: List[Card], strategy: GameStrategy):
     result.num_final_piles = len(piles)
     return result
 
+def run_n_games(s, n, riffles=None):
+    results = []
+    d = Deck()
+    d.shuffle()
+    for i in range(n):
+        res = run_game(d.card_list, s)
+        results.append(res.num_final_piles)
+        if riffles != None:
+            d = Deck()
+            d.reconstruct(res.get_full_piles())
+            for j in range(riffles):
+                d.riffle()
+        else:
+            d = Deck()
+            d.shuffle()
+    return results
 
 if __name__ == "__main__":
 
     greedy = GreedyStrategy()
-    optimist = OptimisticStrategy()
+    random = RandomStrategy()
     minimax = MinimaxStrategy(max_depth=5)
-    games_until_win = 0
-    won = False
-    while not won:
-        games_until_win += 1
-        d = Deck()
-        d.shuffle()
-        res = run_game(d.card_list, optimist)
-        full_piles = res.get_full_piles()
-        if res.num_final_piles == 1:
-            won = True
-    print(games_until_win)
-    print(res)
-    print(res.get_full_piles())
+    optimist = OptimisticStrategy()
+
+    n = 200000
+    #riffles = 12
+
+    for t in range(5):
+        results = run_n_games(random, n)
+        results = np.array(results)
+        np.save(f"random_strat_random_deck_t{t}.npy", results)
+
