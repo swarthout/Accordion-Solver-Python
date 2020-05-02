@@ -38,8 +38,6 @@ class MinimaxStrategy(GameStrategy):
 # When there are multiple turns that result in the same number of piles this algorithm will pick the first it finds
 class GreedyStrategy(GameStrategy):
     def choose_move(self, piles: List[Card], deck=None) -> List[Move]:
-        if deck is None:
-            deck = []
         all_moves = get_all_moves(piles)
         min_piles = np.inf
         chosen_move_list = []
@@ -56,8 +54,6 @@ class GreedyStrategy(GameStrategy):
 # If there are only move 3 options available it will randomly choose one of them.
 class MoveOneStrategy(GameStrategy):
     def choose_move(self, piles: List[Card], deck=None) -> List[Move]:
-        if deck is None:
-            deck = []
 
         def is_move_one(move):
             return move.start_index - move.end_index == 1
@@ -89,8 +85,6 @@ class MoveOneStrategy(GameStrategy):
 # The move three strategy is equivalent to the move one strategy but will pick move 3 options when available
 class MoveThreeStrategy(GameStrategy):
     def choose_move(self, piles: List[Card], deck=None) -> List[Move]:
-        if deck is None:
-            deck = []
 
         def is_move_three(move):
             return move.start_index - move.end_index == 3
@@ -122,12 +116,22 @@ class MoveThreeStrategy(GameStrategy):
 # The random strategy will repeatedly move piles until it cannot move anymore
 class RandomStrategy(GameStrategy):
     def choose_move(self, piles: List[Card], deck=None) -> List[Move]:
-        if deck is None:
-            deck = []
-        all_moves = get_all_moves(piles)
-        if not all_moves:
+        chosen_move_list = []
+        possible_moves = get_possible_moves(piles)
+        next_move = None
+        if not possible_moves:
             return []
-        return random.choice(all_moves)
+        else:
+            next_move = random.choice(possible_moves)
+        while next_move:
+            chosen_move_list.append(next_move)
+            new_piles = apply_move(next_move)
+            possible_moves = get_possible_moves(new_piles)
+            if not possible_moves:
+                next_move = None
+            else:
+                next_move = random.choice(possible_moves)
+        return chosen_move_list
 
 
 if __name__ == "__main__":
@@ -135,6 +139,6 @@ if __name__ == "__main__":
     #     [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")]))
     d = Deck()
     d.shuffle()
-    print(MinimaxStrategy().choose_move(
+    print(RandomStrategy().choose_move(
         [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")],
         d.card_list))

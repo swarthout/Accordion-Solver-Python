@@ -88,22 +88,23 @@ def test_get_possible_moves():
 
 
 def test_get_all_moves():
-    # d = Deck()
-    # d.shuffle()
-    # all_moves = get_all_moves(
-    # [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")])
     d = Deck()
     d.shuffle()
-    for i in range(1, 20):
-        piles = d.card_list[:i]
-        tic = perf_counter()
-        initial_moves = get_possible_moves(piles)
-        total_moves = get_all_moves(piles)
-        num_initial_move = len(initial_moves)
-        num_total_moves = len(total_moves)
-        toc = perf_counter()
-        print(
-            f"get_all_moves for {i} piles took {toc - tic:0.4f} seconds ({num_initial_move} initial moves, {num_total_moves} total moves  )")
+    all_moves = get_all_moves(
+    [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")])
+    print(all_moves)
+    # d = Deck()
+    # d.shuffle()
+    # for i in range(1, 20):
+    #     piles = d.card_list[:i]
+    #     tic = perf_counter()
+    #     initial_moves = get_possible_moves(piles)
+    #     total_moves = get_all_moves(piles)
+    #     num_initial_move = len(initial_moves)
+    #     num_total_moves = len(total_moves)
+    #     toc = perf_counter()
+    #     print(
+    #         f"get_all_moves for {i} piles took {toc - tic:0.4f} seconds ({num_initial_move} initial moves, {num_total_moves} total moves  )")
 
 
 def test_apply_move_list():
