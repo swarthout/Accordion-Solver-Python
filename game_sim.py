@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List, Tuple
 
 from game_logic import Card, Move, apply_move_list, Deck
-from strategies import GameStrategy, GreedyStrategy, MinimaxStrategy
+from strategies import GameStrategy, GreedyStrategy, MinimaxStrategy, OptimisticStrategy
 
 
 @dataclass
@@ -43,6 +43,7 @@ def run_game(deck: List[Card], strategy: GameStrategy):
 if __name__ == "__main__":
 
     greedy = GreedyStrategy()
+    optimist = OptimisticStrategy()
     minimax = MinimaxStrategy(max_depth=5)
     games_until_win = 0
     won = False
@@ -50,7 +51,7 @@ if __name__ == "__main__":
         games_until_win += 1
         d = Deck()
         d.shuffle()
-        res = run_game(d.card_list, greedy)
+        res = run_game(d.card_list, optimist)
         full_piles = res.get_full_piles()
         if res.num_final_piles == 1:
             won = True

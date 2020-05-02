@@ -3,7 +3,7 @@ from abc import ABC
 from typing import List
 
 import numpy as np
-from game_logic import Move, Card, get_all_moves, get_possible_moves, apply_move_list, apply_move, Deck
+from game_logic import Move, Card, get_all_moves, get_possible_moves, apply_move_list, apply_move, Deck, cards_match
 from minimax import MiniMax
 
 
@@ -47,6 +47,59 @@ class GreedyStrategy(GameStrategy):
             if num_piles < min_piles:
                 chosen_move_list = move_list
                 min_piles = num_piles
+        return chosen_move_list
+
+
+class OptimisticStrategy(GameStrategy):
+    def choose_move(self, piles: List[Card], deck) -> List[Move]:
+        def get_playable_draw_probability(last_card, third_card, deck):
+            deck_len = len(deck)
+            if not deck_len:
+                return 0.0
+            num_last_card_matches = 0
+            num_third_card_matches = 0
+            both_matches = 0
+            for deck_card in deck:
+                last_matched = False
+                third_matched = False
+                if cards_match(last_card, deck_card):
+                    num_last_card_matches += 1
+                    last_matched = True
+                if third_card:
+                    if cards_match(third_card, deck_card):
+                        num_third_card_matches += 1
+                        third_matched = True
+                    if last_matched and third_matched:
+                        both_matches += 1
+            # P(either card matches) = P(first card matches) + P(third card matches) - P(both cards match)
+            # We need to subtract when they both match since you can only move a card to a single pile
+            p = ((num_last_card_matches + num_third_card_matches) / deck_len) - (both_matches / deck_len)
+            return p
+
+        all_moves = get_all_moves(piles)
+        optimal_move_lists = []
+        min_piles = np.inf
+        chosen_move_list = []
+        for move_list in all_moves:
+            resulting_piles = apply_move_list(move_list)
+            num_piles = len(resulting_piles)
+            if num_piles < min_piles:
+                optimal_move_lists = [move_list]
+                min_piles = num_piles
+            elif num_piles == min_piles:
+                optimal_move_lists.append(move_list)
+        max_p = -np.inf
+        for move_list in optimal_move_lists:
+            resulting_piles = apply_move_list(move_list)
+            last_card = resulting_piles[-1]
+            if len(resulting_piles) >= 3:
+                third_card = resulting_piles[-3]
+            else:
+                third_card = None
+            p = get_playable_draw_probability(last_card, third_card, deck)
+            if p > max_p:
+                chosen_move_list = move_list
+                max_p = p
         return chosen_move_list
 
 
@@ -137,8 +190,12 @@ class RandomStrategy(GameStrategy):
 if __name__ == "__main__":
     # print(GreedyStrategy().choose_move(
     #     [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")]))
-    d = Deck()
-    d.shuffle()
-    print(RandomStrategy().choose_move(
-        [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")],
-        d.card_list))
+    # d = Deck()
+    # d.shuffle()
+    # print(RandomStrategy().choose_move(
+    #     [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")],
+    #     d.card_list))
+    card_list = [Card("2", "Hearts"), Card("7", "Clubs")]
+    print(OptimisticStrategy().choose_move(
+        [Card("A", "Hearts"), Card("A", "Clubs"), Card("6", "Spades"), Card("9", "Hearts"), ],
+        card_list))
