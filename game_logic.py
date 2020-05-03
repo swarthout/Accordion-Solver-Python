@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from time import perf_counter
 from typing import List, Optional
 
+import numpy as np
+
 
 @dataclass
 class Card:
@@ -17,7 +19,7 @@ class Move:
     piles: List[Card]
 
 
-class Deck:  # each deck is its own class
+class Deck:
     card_list = []
     suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
     ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
@@ -41,8 +43,10 @@ class Deck:  # each deck is its own class
     def riffle(self):
         inds = list(range(52))
         cut_loc = int(np.round(np.random.normal(loc=26.0, scale=4.0)))
-        if cut_loc < 1: cut_loc = 1
-        elif cut_loc > 51: cut_loc = 51
+        if cut_loc < 1:
+            cut_loc = 1
+        elif cut_loc > 51:
+            cut_loc = 51
         top = inds[:cut_loc]
         bot = inds[cut_loc:]
         p_top = 0.5
@@ -61,6 +65,7 @@ class Deck:  # each deck is its own class
                 new_inds.append(top.pop())
         new_inds = np.array(new_inds, dtype=np.int)
         self.card_list = [self.card_list[i] for i in new_inds]
+
 
 def cards_match(card1: Card, card2: Card) -> bool:
     return (card1.rank == card2.rank) or (card1.suit == card2.suit)
@@ -121,7 +126,7 @@ def test_get_all_moves():
     d = Deck()
     d.shuffle()
     all_moves = get_all_moves(
-    [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")])
+        [Card("A", "Spades"), Card("A", "Hearts"), Card("4", "Spades"), Card("6", "Spades"), Card("A", "Clubs")])
     print(all_moves)
     # d = Deck()
     # d.shuffle()

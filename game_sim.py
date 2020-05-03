@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import List, Tuple
 
+import numpy as np
+
 from game_logic import Card, Move, apply_move_list, Deck
 from strategies import GameStrategy, GreedyStrategy, MinimaxStrategy, OptimisticStrategy, RandomStrategy
 
